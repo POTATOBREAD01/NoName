@@ -1,0 +1,107 @@
+@charset "UTF-8";
+
+body {
+    font-family: "Noto Sans KR", sans-serif;
+    background-color: #fff;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+h1 {
+    background-color: #007bff;
+    color: white;
+    padding: 14px 20px;
+    font-size: 20px;
+}
+
+.section {
+    margin-top: 30px;
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* 테이블 공통 스타일 */
+.info-table,
+.bill-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.info-table th,
+.info-table td,
+.bill-table th,
+.bill-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 14px;
+}
+
+/* 정보 테이블 스타일 */
+.info-table th {
+    background-color: #f9f9f9;
+    text-align: left;
+    width: 20%;
+}
+
+/* 납부 내역 테이블 스타일 */
+.bill-table th {
+    background-color: #f1f1f1;
+    text-align: center;
+}
+
+.bill-table td {
+    text-align: center;
+}
+
+/* 버튼 영역 */
+.button-area {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* 공통 버튼 스타일 */
+.button-area button {
+    padding: 10px 20px;
+    font-size: 14px;
+    margin: 0 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* 버튼 색상 분리 */
+.button-area .print {
+    background-color: #6c757d;
+    color: white;
+}
+
+.button-area .print-list {
+    background-color: #dc3545;
+    color: white;
+}
+
+.button-area button:hover {
+    opacity: 0.9;
+}
+
+@media print {
+    select {
+        display: none;
+    }
+    .print-purpose {
+        display: inline;
+        font-weight: bold;
+    }
+}

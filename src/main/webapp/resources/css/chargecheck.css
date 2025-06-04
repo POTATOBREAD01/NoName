@@ -1,0 +1,95 @@
+@charset "UTF-8";
+
+	body {
+    font-family: "Noto Sans KR", sans-serif; /* 한글 웹폰트 */
+    background-color: #f8f9fa; /* 연한 회색 배경 */
+    margin: 0;
+    padding: 40px; /* 전체 여백 */
+	}
+	span{
+	font-size:20pt;
+	font-weight:bold;
+	}
+	label{
+	font-size:8pt;
+	color:gray;
+	}
+	table{
+	width:800px;
+	border-spacing:0;
+	border:1px solid #cccccc;
+	border-radius:30px;
+	padding:20px;
+	margin:auto;
+	}
+	tr th{
+	border-bottom:2px solid black;
+	padding-bottom:10px;
+	}
+	tr td{
+	border-top:1px solid #cccccc;
+	padding:0 15pt;
+	height:40px;
+	}
+	tr .select1{
+	border:none;
+	font-size:12px;
+	font-weight:bold;
+	height:20px;
+	}
+	tr .select2{
+	border:none;
+	height:20px;
+	}
+	select{
+	border: none; /* 테두리 제거 */
+  	width:700px;
+  	background-color:#f8f9fa;
+	}
+	.l_table{
+	text-align: left;
+	font-size:10pt;
+	font-weight:bold;
+	}
+	.r_table{
+	text-align: right;
+	color:#a0a0a0;
+	}
+	.sum{
+	color:red;
+	background-color:#eeeeee;
+	}
+	.last_l_table{
+	text-align: left;
+	border-top:2px solid black;
+	}
+	.last_r_table{
+	color:red;	
+	text-align: right;
+	border-top:2px solid black;
+	}
+	.annotation{
+	color:blue;
+	}
+	.innerdiv{
+	height:100px;
+	width:300px;
+	/*임시 div 표시용 배경색 */
+	background-color:aquamarine;
+	position:relative;
+	display:inline-block;
+	vertical-align: top;
+	}
+	.customer_value{
+	padding-top:20px;
+	}
+	.value{
+	padding-top:10px;
+	color:#a0a0a0;
+	}
+	.hide_button{
+	font-size:22pt;
+	}
+	.hide_button:hover{
+	cursor: pointer;
+	}	

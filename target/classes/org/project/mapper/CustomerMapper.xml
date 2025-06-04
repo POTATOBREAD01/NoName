@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.project.mapper.CustomerMapper">
+
+    <!-- 전체 고객 목록 조회 -->
+    <select id="getAllCustomers" resultType="org.project.domain.Customer">
+        SELECT userno, name, id, password, phone, address,
+               month25_1, month25_2, month25_3, month25_4, month25_5, month25_6,
+               month25_7, month25_8, month25_9, month25_10, month25_11, month25_12
+          FROM user
+    </select>
+
+    <!-- 검색 기능 -->
+    <select id="searchCustomers" parameterType="string" resultType="org.project.domain.Customer">
+        SELECT userno, name, id, password, phone, address,
+               month25_1, month25_2, month25_3, month25_4, month25_5, month25_6,
+               month25_7, month25_8, month25_9, month25_10, month25_11, month25_12
+          FROM user
+         WHERE CAST(userno AS CHAR) LIKE CONCAT('%', #{keyword}, '%')
+            OR name LIKE CONCAT('%', #{keyword}, '%')
+            OR id LIKE CONCAT('%', #{keyword}, '%')
+            OR phone LIKE CONCAT('%', #{keyword}, '%')
+            OR address LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+    <!-- 단일 고객 조회 -->
+    <select id="getCustomerByUserno" parameterType="int" resultType="org.project.domain.Customer">
+        SELECT userno, name, id, password, phone, address,
+               month25_1, month25_2, month25_3, month25_4, month25_5, month25_6,
+               month25_7, month25_8, month25_9, month25_10, month25_11, month25_12
+          FROM user
+         WHERE userno = #{userno}
+    </select>
+
+    <!-- 고객 삭제 -->
+    <delete id="deleteCustomer" parameterType="int">
+        DELETE FROM user WHERE userno = #{userno}
+    </delete>
+    
+    <!-- 회원가입(삽입) -->
+    <insert id="insertCustomer" parameterType="org.project.domain.Customer">
+        INSERT INTO user (name, id, password, phone, address,
+                          month25_1, month25_2, month25_3, month25_4, month25_5, month25_6,
+                          month25_7, month25_8, month25_9, month25_10, month25_11, month25_12)
+        VALUES (#{name}, #{id}, #{password}, #{phone}, #{address},
+                #{month25_1}, #{month25_2}, #{month25_3}, #{month25_4}, #{month25_5}, #{month25_6},
+                #{month25_7}, #{month25_8}, #{month25_9}, #{month25_10}, #{month25_11}, #{month25_12})
+    </insert>
+
+    <!-- 아이디 중복 검사 -->
+    <select id="countById" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM user WHERE id = #{id}
+    </select>
+
+</mapper>
