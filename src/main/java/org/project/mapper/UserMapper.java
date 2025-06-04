@@ -7,5 +7,5 @@ import org.project.domain.UserVO;
 
 public interface UserMapper {
 	
-	public List<UserVO> view(@Param("userno") Long userno);
+	public List<UserVO> view(@Param("userid") String userid);
 }

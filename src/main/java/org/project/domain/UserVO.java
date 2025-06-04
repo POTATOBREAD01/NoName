@@ -4,22 +4,21 @@ import lombok.Data;
 
 @Data
 public class UserVO {
-	private int userno;
-	private String name;
-	private String id;
-	private String password;
-	private String phone;
-	private String address;
-	private int month25_1;
-	private int month25_2;
-	private int month25_3;
-	private int month25_4;
-	private int month25_5;
-	private int month25_6;
-	private int month25_7;
-	private int month25_8;
-	private int month25_9;
-	private int month25_10;
-	private int month25_11;
-	private int month25_12;
+	private String username;
+	private String userid;
+	private String userpw;
+	private String userphone;
+	private String useraddr;
+	private int month1;
+	private int month2;
+	private int month3;
+	private int month4;
+	private int month5;
+	private int month6;
+	private int month7;
+	private int month8;
+	private int month9;
+	private int month10;
+	private int month11;
+	private int month12;
 }

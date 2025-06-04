@@ -11,7 +11,7 @@ public class UserServiceImpl implements UserService {
 	
 	private UserMapper mapper;
 	
-	public List<UserVO> view(@Param("userno") Long userno){
-		return mapper.view(userno);
+	public List<UserVO> view(@Param("userid") String userid){
+		return mapper.view(userid);
 	}
 }

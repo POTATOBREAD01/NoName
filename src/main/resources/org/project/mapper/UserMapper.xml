@@ -5,7 +5,7 @@
   
  <mapper namespace="org.project.mapper.UserMapper">
 	<select id="view" resultType="org.project.domain.UserVO">
-		select * from user where userno=#{userno}
+		select * from tbl_member as t inner join elect_bill as e on t.userid=e.userid where t.userid=#{userid}
 	</select>
 	
 </mapper>

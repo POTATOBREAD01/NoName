@@ -22,6 +22,15 @@
 	padding:20px;
 	margin:auto;
 	}
+	#graph{
+	width:800px;
+	border-spacing:0;
+	border:1px solid #cccccc;
+	border-radius:30px;
+	padding:20px;
+	margin:auto;
+	box-sizing:border-box;
+	}
 	tr th{
 	border-bottom:2px solid black;
 	padding-bottom:10px;
@@ -75,7 +84,7 @@
 	height:100px;
 	width:300px;
 	/*임시 div 표시용 배경색 */
-	background-color:aquamarine;
+	/*background-color:aquamarine;*/
 	position:relative;
 	display:inline-block;
 	vertical-align: top;
@@ -93,3 +102,22 @@
 	.hide_button:hover{
 	cursor: pointer;
 	}	
+	
+	.center-button {
+   	display: flex;
+    justify-content: center;
+    align-items: center;
+   	margin-top: 30px;
+	}
+	.center-button button {
+   	padding: 10px 20px;
+    font-size: 16px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+	}
+	.center-button button:hover {
+   	background-color: #003d80;
+	}
