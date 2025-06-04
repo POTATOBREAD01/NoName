@@ -10,7 +10,8 @@ import lombok.extern.log4j.Log4j2;
 @Controller
 @Log4j2
 public class CommonController {
-
+	
+	//COMMIT TEST
 	// 권한 없음 매핑
 	@GetMapping("/accessError")
 	public void accessDenied(Authentication auth, Model model) {
