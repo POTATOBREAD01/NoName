@@ -114,7 +114,7 @@ public class CustomerController {
         Map<String, Object> result = new HashMap<>();
         if (password == null || !password.matches("^(?=.*[a-zA-Z])(?=.*\\d).{8,}$")) {
             result.put("valid", false);
-            result.put("message", "비밀번호는 최소 8자 이상이며, 영문자와 숫자를 포함해야 합니다.");
+            result.put("message", "비밀번호는 최소 8자 이상이며, 영문자와"+System.getProperty("line.separator")+"숫자를 포함해야 합니다.");
         } else {
             result.put("valid", true);
         }
@@ -142,7 +142,7 @@ public class CustomerController {
         Map<String, Object> result = new HashMap<>();
         if (phone == null || !phone.matches("^\\d{10,11}$")) {
             result.put("valid", false);
-            result.put("message", "전화번호는 숫자만 입력하며, 10자리 또는 11자리여야 합니다.");
+            result.put("message", "전화번호는 숫자만 입력하며, 10자리 또는"+System.getProperty("line.separator")+"11자리여야 합니다.");
         } else {
             result.put("valid", true);
         }

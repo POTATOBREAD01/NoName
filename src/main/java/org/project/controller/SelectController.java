@@ -2,6 +2,7 @@ package org.project.controller;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.project.domain.MemberVO;
@@ -74,16 +75,36 @@ public class SelectController {
             model.addAttribute("message", "해당 회원을 찾을 수 없습니다.");
             return "error";
         }
-
+        List<Integer> realCharges = new ArrayList<>();
         int totalAmount = 0;
         if (member.getMonthlyUsage() != null) {
-            totalAmount = Arrays.stream(member.getMonthlyUsage())
-                                .map(usage -> usage * 210)
-                                .sum();
+            for (int use : member.getMonthlyUsage()) {
+                int basic = 0, useCharge = 0;
+                if (use <= 200) {
+                    basic = 730;
+                    useCharge = use * 97;
+                } else if (use <= 400) {
+                    basic = 1260;
+                    useCharge = use * 166;
+                } else {
+                    basic = 6060;
+                    useCharge = use * 234;
+                }
+                int ceCharge = (use / 10) * 73;
+                int fcAdjustment = use * 5;
+                int sumCharge = basic + useCharge + ceCharge + fcAdjustment;
+                int fund = (sumCharge / 1000) * 36;
+                int addedTax = Math.round(sumCharge / 10);
+                int totalCharge = sumCharge + addedTax + fund;
+
+                realCharges.add(totalCharge);
+                totalAmount += totalCharge; // ⭐ 여기서 누적
+            }
         }
 
         model.addAttribute("member", member);
-        model.addAttribute("totalAmount", totalAmount);
+        model.addAttribute("realCharges", realCharges);
+        model.addAttribute("totalAmount", totalAmount); // ✔ 정확한 총액 전달
         return "proof";
     }
 

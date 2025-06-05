@@ -101,6 +101,7 @@
             fetch(contextPath + '/customer/checkPhone?phone=' + encodeURIComponent(phone))
                 .then(res => res.json())
                 .then(data => {
+                	phoneError.style.color="red";
                     phoneError.innerText = data.valid ? "" : data.message;
                 });
         }, 300);
@@ -128,41 +129,45 @@
     </script>
 </head>
 <body>
+<h2>회원가입</h2>
     <div class="signup-container">
         <form action="${pageContext.request.contextPath}/customer/signup" method="post">
-            <h2>회원가입</h2>
             <div class="form-group">
-                <label for="userid">아이디</label>
-                <input type="text" id="userid" name="userid" class="form-control" oninput="checkIdDuplicate()">
+                <input type="text" id="userid" name="userid" class="form-control" oninput="checkIdDuplicate()" placeholder="아이디"><br>
                 <span id="idError" class="error-message"></span>
             </div>
 
             <div class="form-group">
-                <label for="userpw">비밀번호</label>
-                <input type="password" id="userpw" name="userpw" class="form-control" oninput="checkPassword()">
+                <input type="password" id="userpw" name="userpw" class="form-control" oninput="checkPassword()" placeholder="비밀번호"><br>
                 <span id="passwordError" class="error-message"></span>
             </div>
 
             <div class="form-group">
-                <label for="repassword">비밀번호 확인</label>
-                <input type="password" id="repassword" name="repassword" class="form-control" oninput="checkRepassword()">
+                <input type="password" id="repassword" name="repassword" class="form-control" oninput="checkRepassword()" placeholder="비밀번호확인"><br>
                 <span id="repasswordError" class="error-message"></span>
             </div>
 
             <div class="form-group">
-                <label for="userphone">전화번호</label>
-                <input type="text" id="userphone" name="userphone" class="form-control" oninput="checkPhone()">
+                <input type="text" id="userphone" name="userphone" class="form-control" oninput="checkPhone()" placeholder="전화번호"><br>
                 <span id="phoneError" class="error-message"></span>
             </div>
 
             <div class="form-group">
-                <label for="useraddr">주소</label>
-                <input type="text" id="useraddr" name="useraddr" class="form-control">
-                <button type="button" class="btn btn-primary" onclick="searchAddress()">주소 검색</button>
+                <input type="text" id="useraddr" name="useraddr" class="form-control" placeholder="주소">
             </div>
-
+            <div>
+            <button type="button" class="btn btn-primary" onclick="searchAddress()">주소 검색</button>
+            </div>
+			<div>
             <button type="submit" class="btn btn-success">회원가입</button>
+            </div>
         </form>
     </div>
+    <!-- 메인 이동 -->
+	<div class="center-button">
+    	<form action="/main.do" method="get">
+	        <button type="submit">메인화면 이동</button>
+    	</form>
+	</div>
 </body>
 </html>

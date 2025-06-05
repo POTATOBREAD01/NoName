@@ -26,95 +26,81 @@ $(document).ready(function () {
     // 공공데이터 API 호출 함수
     async function getPublicData(month, address) {
     	
-    try {
-    	if (!month) {
-            month = 1;  // 기본값 설정
+    	try {
+            const response = await fetch("/api/publicPowerUsage?month=" + month + "&address=" + encodeURIComponent(address));
+            const json = await response.json();
+            const data = json.data;
+
+            // 지역의 평균값 구하기
+            let totalHouseCnt = 0;
+            let weightedUsageSum = 0;
+            let weightedBillSum = 0;
+
+            for (const item of data) {
+                const cnt = item.houseCnt;
+                const usage = item.powerUsage;
+                const bill = item.bill;
+
+                totalHouseCnt += cnt;
+                weightedUsageSum += usage * cnt;
+                weightedBillSum += bill * cnt;
+            }
+
+            const avgUsage = weightedUsageSum / totalHouseCnt;
+            const avgBill = weightedBillSum / totalHouseCnt;
+
+            return {
+                powerUsage: Math.round(avgUsage),
+                bill: Math.round(avgBill),
+                regionName: json.regionName  // 
+            };
+        } catch (e) {
+            console.error("공공데이터 요청 실패:", e);
+            return { powerUsage: 0, bill: 0, regionName: "세종" };
         }
-
-        const response = await fetch("/api/publicPowerUsage?month="+month+"&address="+encodeURIComponent(address));
-        const json = await response.json();
-        const data = json.data;
-		
-        
-        // 지역의 평균값 구하기
-        let totalHouseCnt = 0;
-        let weightedUsageSum = 0;
-        let weightedBillSum = 0;
-
-        for (const item of data) {
-        	const cnt = item.houseCnt;
-            const usage = item.powerUsage;
-            const bill = item.bill;
-
-            totalHouseCnt += cnt;
-            weightedUsageSum += usage * cnt;
-            weightedBillSum += bill * cnt;
-        }
-
-        const avgUsage = weightedUsageSum / totalHouseCnt;
-        const avgBill = weightedBillSum / totalHouseCnt;
-        
-        return {
-            powerUsage: Math.round(avgUsage),
-            bill: Math.round(avgBill)
-        };
-    } catch(e) {
-        return { powerUsage: 0, bill: 0 };
-    }
 	}
 
     // 개인요금 계산 함수
-    function calculateCharges(use) {
-        let basic = 0, useCharge = 0;
-        if (use <= 200) {
-            basic = 730;
-            useCharge = use * 97;
-        } else if (use <= 400) {
-            basic = 1260;
-            useCharge = use * 166;
-        } else {
-            basic = 6060;
-            useCharge = use * 234;
-        }
-        const ceCharge = Math.floor(use / 10 * 73);
-        const fcAdjustment = use * 5;
-        const sumCharge = basic + useCharge + ceCharge + fcAdjustment;
-        const fund = Math.floor(sumCharge / 1000 * 36);
-        const addedTax = Math.round(sumCharge / 10);
-        const totalCharge = sumCharge + addedTax + fund;
-
-        return { basic, useCharge, ceCharge, fcAdjustment, sumCharge, fund, addedTax, totalCharge };
+    async function fetchCharges(use) {
+    try {
+        const res = await fetch(`/api/calculateCharges?usage=`+use);
+        const data = await res.json();
+        return data;
+    } catch (e) {
+        console.error("Failed to fetch charges:", e);
+        return null;
     }
+}
 	
-    function getRegionName(address) {
-        const regions = [
-            "서울", "부산", "대구", "인천", "광주", "대전", "울산", "세종",
-            "경기", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"
-        ];
-        for (let region of regions) {
-            if (address.includes(region)) {
-                return region;
-            }
-        }
-        return "세종"; // 기본값
-    }
-    const regionName = getRegionName(address);  // 지역 이름 추출
+
     
     // 메인 업데이트 함수 (비동기)
     async function updateCharges(month) {
-    	if (!month || isNaN(month)) {
-            console.warn("Invalid month:", month);
-            return; // 이상하면 함수 종료
+    	const use = usageMap[month];
+        if (!use || isNaN(use)) {
+            console.warn("Invalid usage for month", month);
+            return;
         }
-        const use = usageMap[month];
+
         const prevMonth = month === 1 ? 12 : month - 1;
         const prevUse = usageMap[prevMonth];
-        const startDate = prevMonth+"/18";
-        const endDate = month+"/17";
+        const startDate = prevMonth + "/18";
+        const endDate = month + "/17";
+        const publicData = await getPublicData(month, address);
+        const regionName = publicData.regionName; // 응답에서 바로 사용
 
-        const charges = calculateCharges(use);
+        $("#usagePeriod").text(startDate + " ~ " + endDate);
+        $(".this_month").text(use.toLocaleString());
+        $(".prev_month").text(prevUse.toLocaleString());
+        if (month !== 1) {
+            $("#prev_usage_row").show();
+        } else {
+            $("#prev_usage_row").hide();
+        }
 
-        $("#usagePeriod").text(startDate+" ~ "+endDate);
+        const charges = await fetchCharges(use);
+        if (!charges) return;
+
         $("#basic").text(charges.basic.toLocaleString());
         $("#useCharge").text(charges.useCharge.toLocaleString());
         $("#sumCharge").text(charges.sumCharge.toLocaleString());
@@ -123,19 +109,9 @@ $(document).ready(function () {
         $("#fund").text(charges.fund.toLocaleString());
         $("#addedTax").text(charges.addedTax.toLocaleString());
         $("#totalCharge").text(charges.totalCharge.toLocaleString());
-        $(".this_month").text(use.toLocaleString());
-        $(".prev_month").text(prevUse.toLocaleString());
 
-        if (month !== 1) {
-            $("#prev_usage_row").show();
-        } else {
-            $("#prev_usage_row").hide();
-        }
-
-        // 공공데이터 호출
-        const publicData = await getPublicData(month, address);
-
-        // 그래프 그리기 (개인, 공공 데이터 비교)
+        
+        
         const ctx = document.getElementById('powerChart').getContext('2d');
         if (window.powerChart instanceof Chart) {
             window.powerChart.destroy();
@@ -146,12 +122,12 @@ $(document).ready(function () {
                 labels: ['전력 사용량 (kWh)', '청구 금액 (100원 단위)'],
                 datasets: [
                     {
-                        label: month+`월 개인`,
+                        label: month + '월 개인',
                         data: [use, charges.totalCharge / 100],
                         backgroundColor: ['skyblue', 'skyblue']
                     },
                     {
-                    	label: month + `월 `+regionName+` 평균`,
+                        label: month + '월 ' + regionName + ' 평균',
                         data: [publicData.powerUsage, publicData.bill / 100],
                         backgroundColor: ['salmon', 'salmon']
                     }
@@ -163,7 +139,7 @@ $(document).ready(function () {
                     legend: { position: 'top' },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 let label = context.dataset.label || '';
                                 let value = context.raw;
                                 return label + ': ' + value.toLocaleString();
@@ -223,10 +199,6 @@ window.onload = function () {
 </head>
 <body>
 
-<h1>
-테스트: userid=${user.userid}<br>
-테스트2: username=${user.username}
-</h1>
 
 <div>
 <!-- 고객 정보 -->

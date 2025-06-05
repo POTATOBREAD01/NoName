@@ -50,15 +50,15 @@
             </thead>
             <tbody>
                 <c:forEach var="usage" items="${member.monthlyUsage}" varStatus="status">
-                    <c:set var="month" value="${status.index + 1}" />
-                    <c:set var="monthStr" value="${month lt 10 ? '0' + month : month}" />
-                    <tr>
-                        <td>2025.${monthStr}</td>
-                        <td>${usage}</td>
-                        <td>${usage * 210}</td>
-                        <td>2025.${monthStr}.25</td>
-                    </tr>
-                </c:forEach>
+    				<c:set var="month" value="${status.index + 1}" />
+    				<c:set var="monthStr" value="${month lt 10 ? '0' + month : month}" />
+    				<tr>
+        				<td>2025.${monthStr}</td>
+        				<td>${usage}</td>
+        				<td>${realCharges[status.index]}</td>
+        				<td>2025.${monthStr}.25</td>
+    				</tr>
+				</c:forEach>
             </tbody>
         </table>
         <div class="button-area">

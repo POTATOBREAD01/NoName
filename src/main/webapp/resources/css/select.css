@@ -3,7 +3,7 @@
 /* 전체 페이지 폰트와 배경 설정 */
 body {
     font-family: "Noto Sans KR", sans-serif; /* 한글 웹폰트 */
-    background-color: #f8f9fa; /* 연한 회색 배경 */
+    background-color: #f0f1f2; /* 연한 회색 배경 */
     margin: 0;
     padding: 40px; /* 전체 여백 */
 }
@@ -39,7 +39,7 @@ h2 {
 }
 
 /* 고객 수 표시 */
-.customer-count {
+.member-count {
     font-size: 16px;
     margin-bottom: 10px;
 }
@@ -57,6 +57,7 @@ h2 {
     border: 1px solid #ccc;
     border-radius: 5px 0 0 5px; /* 왼쪽 둥근 모서리만 */
     width: 250px;
+    height:20px;	
 }
 
 /* 검색 버튼 */
@@ -89,7 +90,7 @@ h2 {
 }
 
 /* 고객 카드 전체 박스 */
-.customer-card {
+.member-card {
     background-color: white;
     border: 2px solid #ccc;
     border-radius: 12px;
@@ -102,12 +103,12 @@ h2 {
 }
 
 /* 고객 정보의 각 항목 */
-.customer-info > div {
+.member-info > div {
     margin-bottom: 10px;
 }
 
 /* 고객 정보 라벨 강조 */
-.customer-info strong {
+.member-info strong {
     color: #333;
 }
 
@@ -133,7 +134,7 @@ h2 {
 
 
 /* 고객 없음 안내 메시지 박스 */
-.no-customers {
+.no-members {
     background-color: #fff;
     border: 2px dashed #ccc; /* 점선 테두리 */
     border-radius: 12px;
@@ -144,4 +145,4 @@ h2 {
     font-size: 16px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.03);
 }
-
+	
