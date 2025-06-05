@@ -132,11 +132,19 @@
 <h2>회원가입</h2>
     <div class="signup-container">
         <form action="${pageContext.request.contextPath}/customer/signup" method="post">
+        
+        <!-- 이거 회원가입이 안되서 챗지피티한테 물어보니까 넣으라고 해서 넣으니 되던데 이래도 되는 건가요 -->
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        
             <div class="form-group">
                 <input type="text" id="userid" name="userid" class="form-control" oninput="checkIdDuplicate()" placeholder="아이디"><br>
                 <span id="idError" class="error-message"></span>
             </div>
-
+            
+			<div class="form-group">
+    			<input type="text" id="username" name="username" class="form-control" placeholder="이름"><br>
+			</div>
+			
             <div class="form-group">
                 <input type="password" id="userpw" name="userpw" class="form-control" oninput="checkPassword()" placeholder="비밀번호"><br>
                 <span id="passwordError" class="error-message"></span>
