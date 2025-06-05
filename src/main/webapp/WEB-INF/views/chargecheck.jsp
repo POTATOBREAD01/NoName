@@ -215,7 +215,7 @@ $(document).ready(function () {
 <script>
 window.onload = function () {
     <c:if test="${loginRequired}">
-        alert("로그인 해주세요.");
+        alert("로그인 후 이용해주세요.");
         history.back();
     </c:if>
 }
@@ -279,10 +279,10 @@ window.onload = function () {
 <table>
 	<tr><th class="l_table">이번 달 예상 청구금액 <label>(단위:원)</label></th><th class="r_table hide_button">∧</th></tr>
 	<tr><td class="l_table">전기요금계</td><td class="r_table" id="sumCharge"></td></tr>
-	<tr><td class="l_table">&nbsp;&nbsp;기본요금</td><td class="r_table" id="basic"></td></tr>
-	<tr><td class="l_table">&nbsp;&nbsp;전력량 요금</td><td class="r_table" id="useCharge"></td></tr>
-	<tr><td class="l_table">&nbsp;&nbsp;기후환경요금</td><td class="r_table" id="CE_charge"></td></tr>
-	<tr><td class="l_table">&nbsp;&nbsp;연료비조정요금</td><td class="r_table" id="FC_adjustment"></td></tr>
+	<tr><td class="l_table">&nbsp;&nbsp;&nbsp;&nbsp;기본요금</td><td class="r_table" id="basic"></td></tr>
+	<tr><td class="l_table">&nbsp;&nbsp;&nbsp;&nbsp;전력량 요금</td><td class="r_table" id="useCharge"></td></tr>
+	<tr><td class="l_table">&nbsp;&nbsp;&nbsp;&nbsp;기후환경요금</td><td class="r_table" id="CE_charge"></td></tr>
+	<tr><td class="l_table">&nbsp;&nbsp;&nbsp;&nbsp;연료비조정요금</td><td class="r_table" id="FC_adjustment"></td></tr>
 	<tr><td class="l_table">부가 가치세</td><td class="r_table" id="addedTax"></td></tr>
 	<tr><td class="l_table">전력기금</td><td class="r_table" id="fund"></td></tr>
 	<tr class="sum"><td class="last_l_table">청구금액</td><td class="last_r_table" id="totalCharge"></td></tr>
