@@ -1,6 +1,8 @@
 package org.project.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,13 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
+import org.zerock.security.domain.CustomUser;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.project.controller.UserController;
-
+import org.project.domain.MemberVO;
 import org.project.domain.UserVO;
 import org.project.mapper.UserMapper;
 import org.slf4j.Logger;
@@ -35,24 +36,28 @@ public class UserController {
 	private UserMapper userMapper;
 	
 	@GetMapping("/chargecheck")
-	public String view(HttpSession session, Model model) {
+public String view(Model model) {
 		
-		// 임시로 session userid에 값 저장 시켜놓기 (로그인 구현 후 삭제)
-		session.setAttribute("userid", "member1");
-		
-		// session에 userid 값이 없을 때 페이지 이동 막아놓기
-		Object useridObj = session.getAttribute("userid");
+		// 현재 로그인된 사용자 정보 가져오기
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Object principal = authentication.getPrincipal();
 
-		if (useridObj == null) {
-	        model.addAttribute("loginRequired", true);
-	        return "chargecheck"; // 동일 JSP로 이동, JS에서 막아줌
-	    }
-		
-		String userid = (String) session.getAttribute("userid");
+		// 비로그인 상태일 경우 처리
+		if (!(principal instanceof CustomUser)) {
+			model.addAttribute("loginRequired", true);
+			return "chargecheck"; // JS 등에서 접근 차단
+		}
+
+		// 로그인 사용자 정보에서 userid 가져오기
+		CustomUser customUser = (CustomUser) principal;
+		MemberVO member = customUser.getMember();
+		String userid = member.getUserid();
+
+		// Mapper 호출 및 결과 처리
 		List<UserVO> list = userMapper.view(userid);
 		model.addAttribute("list", list);
+		
 		return "chargecheck";
-
 	}
 	
 	private final String API_KEY = "N4eVLJia24G8FILFhuSldJ65E0nmIcd0j29P7Y9r";
