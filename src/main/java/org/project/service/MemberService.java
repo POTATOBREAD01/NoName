@@ -1,5 +1,7 @@
 package org.project.service;
 
+import java.util.List;
+
 import org.project.domain.MemberVO;
 import org.project.mapper.MemberMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +35,14 @@ public class MemberService {
     // 아이디 존재 여부 확인 (중복 검사용)
     public boolean isIdExist(String id) {
         return memberMapper.countById(id) > 0;
+    }
+    
+    public List<MemberVO> searchCustomer(String keyword) {
+        return memberMapper.searchCustomers(keyword);
+    }
+    
+    //고객번호로 고객 조회 (증명서 출력용)
+    public MemberVO getCustomerByUserid(String userid) {
+        return memberMapper.getCustomerByUserid(userid);
     }
 }

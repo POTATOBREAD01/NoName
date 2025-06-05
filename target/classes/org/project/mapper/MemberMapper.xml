@@ -51,4 +51,40 @@
 	SELECT COUNT(*) FROM tbl_member WHERE userid = #{userid}
 </select>
 
+<!-- 검색 기능 -->
+<select id="searchCustomers" parameterType="string" resultType="org.project.domain.MemberVO">
+	SELECT 
+    m.userid, m.userpw, m.username, m.useraddr, m.userphone,
+    e.month1, e.month2, e.month3, e.month4, e.month5, e.month6, e.month7, e.month8, e.month9, e.month10, e.month11, e.month12
+  FROM tbl_member m
+  LEFT JOIN elect_bill e ON m.userid = e.userid
+  WHERE m.userid LIKE CONCAT('%', #{keyword}, '%')
+     OR m.username LIKE CONCAT('%', #{keyword}, '%')
+     OR m.userphone LIKE CONCAT('%', #{keyword}, '%')
+     OR m.useraddr LIKE CONCAT('%', #{keyword}, '%')
+</select>
+
+<!-- 단일 고객 조회 -->
+<select id="getCustomerByUserid" parameterType="String" resultType="org.project.domain.MemberVO">
+  SELECT 
+    mem.userid, mem.username, mem.userpw, mem.userphone, mem.useraddr,
+    eb.month1, eb.month2, eb.month3, eb.month4, eb.month5, eb.month6,eb.month7, eb.month8,eb.month9, eb.month10, eb.month11, eb.month12
+  FROM tbl_member mem
+  LEFT JOIN elect_bill eb ON mem.userid = eb.userid
+  WHERE mem.userid = #{userid}
+</select>
+
+<!-- 고객 삭제 -->
+<delete id="deleteCustomer" parameterType="string">
+    DELETE FROM user WHERE userid = #{userid}
+</delete>
+
+<!-- 전체 고객 목록 조회 -->
+<select id="getAllCustomers" resultType="org.project.domain.MemberVO">
+    SELECT 
+        m.userid, m.userpw, m.username, m.useraddr, m.userphone, m.enabled,
+        e.month1, e.month2, e.month3, e.month4, e.month5, e.month6, e.month7, e.month8, e.month9, e.month10, e.month11, e.month12
+    FROM tbl_member m
+    JOIN elect_bill e ON m.userid = e.userid
+</select>
 </mapper>

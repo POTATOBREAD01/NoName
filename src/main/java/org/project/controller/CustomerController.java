@@ -6,16 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/customer")
 public class CustomerController {
 
     @Autowired
-    private MemberService customerService;
+    private MemberService memberService;
 
     // 회원가입 폼
     @GetMapping("/signup")
@@ -36,7 +40,7 @@ public class CustomerController {
         if (memberVO.getUserid() == null || !memberVO.getUserid().matches("^[a-zA-Z0-9]{4,16}$")) {
             model.addAttribute("errorId", "아이디는 4~16자의 영문자 또는 숫자만 허용됩니다.");
             hasError = true;
-        } else if (customerService.isIdExist(memberVO.getUserid())) {
+        } else if (memberService.isIdExist(memberVO.getUserid())) {
             model.addAttribute("errorId", "이미 사용 중인 아이디입니다.");
             hasError = true;
         }
@@ -65,7 +69,7 @@ public class CustomerController {
         }
 
         // 회원 가입 처리
-        customerService.registerCustomer(memberVO);
+        memberService.registerCustomer(memberVO);
         return "redirect:/customer/success";
     }
 
@@ -87,7 +91,7 @@ public class CustomerController {
                 return result;
             }
 
-            boolean exists = customerService.isIdExist(id);
+            boolean exists = memberService.isIdExist(id);
             if (exists) {
                 result.put("valid", false);
                 result.put("message", "이미 사용 중인 아이디입니다.");
@@ -143,5 +147,58 @@ public class CustomerController {
             result.put("valid", true);
         }
         return result;
+    }
+    
+    @GetMapping("/searchCustomer")
+    public String searchCustomer(@RequestParam(required = false) String keyword, Model model, HttpSession session) {
+        List<MemberVO> newMembers = memberService.searchCustomer(keyword == null ? "" : keyword);
+        List<MemberVO> sessionMembers = (List<MemberVO>) session.getAttribute("members");
+
+        if (sessionMembers == null) {
+            session.setAttribute("members", newMembers);
+        } else {
+            for (MemberVO m : newMembers) {
+                boolean exists = sessionMembers.stream().anyMatch(sc -> sc.getUserid() == m.getUserid());
+                if (!exists) {
+                    sessionMembers.add(m);
+                }
+            }
+            session.setAttribute("members", sessionMembers);
+        }
+
+        model.addAttribute("members", session.getAttribute("members"));
+        model.addAttribute("keyword", keyword);
+        return "select";
+    }
+
+    @GetMapping("/select")
+    public String select(Model model, HttpSession session) {
+        List<MemberVO> members = (List<MemberVO>) session.getAttribute("members");
+        model.addAttribute("members", members);
+        return "select";
+    }
+
+    @PostMapping("/clearSearch")
+    public String clearSearch(HttpSession session) {
+        session.removeAttribute("members");
+        return "redirect:/customer/select";
+    }
+
+    @PostMapping("/removeCustomer")
+    public String removeCustomer(@RequestParam String userid, HttpSession session, RedirectAttributes rttr) {
+        List<MemberVO> members = (List<MemberVO>) session.getAttribute("members");
+        if (members != null) {
+            members.removeIf(c -> c.getUserid().equals(userid));
+            session.setAttribute("members", members);
+            rttr.addFlashAttribute("message", "고객번호 " + userid + " 조회가 취소되었습니다.");
+        }
+        return "redirect:/customer/select";
+    }
+
+    @GetMapping("/proof")
+    public String proof(@RequestParam String userid, Model model) {
+        MemberVO member = memberService.getCustomerByUserid(userid);
+        model.addAttribute("member", member);
+        return "proof";
     }
 }

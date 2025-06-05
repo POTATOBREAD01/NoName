@@ -1,32 +1,42 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>고객번호 선택</title>
+    <title>회원 선택</title>
     <link rel="stylesheet" href="<c:url value='/resources/css/select.css' />">
+    <script type="text/javascript" src="/resources/js/select.js"></script>
 </head>
 <body>
 <div class="container">
-    <h2>아래 등록 고객번호를 선택해주세요</h2>
+    <h2>아래 등록된 회원을 선택해주세요</h2>
 
     <div class="top-bar">
-        <c:if test="${not empty customers}">
-            <span class="customer-count">
-                등록 고객번호 <strong><c:out value="${fn:length(customers)}" /></strong>
+        <c:if test="${not empty members}">
+            <span class="member-count">
+                등록 회원 <strong><c:out value="${fn:length(members)}" /></strong>
             </span>
         </c:if>
 
-        <form class="search-form" method="get" action="searchCustomer.do">
-            <input type="text" name="keyword" placeholder="고객번호, 성명, 주소, 별명 검색" />
+        <!-- 검색 폼 -->
+        <form class="search-form" method="get" action="<c:url value='/customer/searchCustomer' />" onsubmit="return validateSearch()">
+            <input type="text" name="keyword" id="keyword" placeholder="아이디, 성명 검색"
+                   value="${param.keyword != null ? param.keyword : ''}" />
             <button type="submit">🔍</button>
         </form>
 
+        <!-- 상단 버튼 영역 -->
         <div class="action-buttons">
-            <button onclick="location.href='main.do'">메인화면</button>
+            <!-- 전체 조회 취소 -->
+            <form method="post" action="<c:url value='/customer/clearSearch' />" style="display:inline;" onsubmit="return validateClearSearch()">
+                <sec:csrfInput />
+                <button type="submit">전체 조회 취소</button>
+            </form>
+            <button onclick="location.href='<c:url value='/main.do'/>'">메인화면 이동</button>
         </div>
     </div>
 
@@ -34,33 +44,36 @@
         <div class="message">${message}</div>
     </c:if>
 
-    <div class="customer-list">
+    <div class="member-list">
         <c:choose>
-            <c:when test="${empty customers}">
-                <div class="no-customers">
-                    <p>현재 등록된 고객이 없습니다.</p>
+            <c:when test="${empty members}">
+                <div class="no-members">
+                    <p>현재 등록된 회원이 없습니다.</p>
                 </div>
             </c:when>
             <c:otherwise>
-                <c:forEach var="customer" items="${customers}">
-                    <div class="customer-card">
-                        <div class="customer-info">
-                            <div><strong>고객번호</strong><br>${customer.userno}</div>
-                            <div><strong>성명</strong><br>${customer.name}</div>
-                            <div><strong>아이디</strong><br>${customer.id}</div>
-                            <div><strong>전화번호</strong><br>${customer.phone}</div>
-                            <div><strong>주소</strong><br>${customer.address}</div>
+                <c:forEach var="member" items="${members}">
+                    <div class="member-card">
+                        <div class="member-info">
+                            <div><strong>아이디</strong><br>${member.userid}</div>
+                            <div><strong>성명</strong><br>${member.username}</div>
+                            <div><strong>전화번호</strong><br>${member.userphone}</div>
+                            <div><strong>주소</strong><br>${member.useraddr}</div>
                         </div>
 
                         <div class="button-group">
-                            <form method="get" action="proof.do" class="output-form">
-                                <input type="hidden" name="userno" value="${customer.userno}" />
+                            <!-- 증명서 출력 -->
+                            <form method="get" action="<c:url value='/customer/proof' />" class="output-form" style="display:inline;">
+                                <input type="hidden" name="userid" value="${member.userid}" />
                                 <button type="submit" class="action-button">증명서 출력</button>
                             </form>
 
-                            <%-- 조회 취소 버튼 (폼 제출) --%>
-                        <form method="get" action="selectCustomer.do" class="delete-form">
-                            <button type="submit" class="action-button">조회 취소</button>
+                            <!-- 개별 조회 취소 -->
+                            <form method="post" action="<c:url value='/customer/removeCustomer' />" style="display:inline;">
+                                <sec:csrfInput />
+                                <input type="hidden" name="userid" value="${member.userid}" />
+                                <button type="submit" class="action-button cancel-button">조회 취소</button>
+                            </form>
                         </div>
                     </div>
                 </c:forEach>
@@ -70,4 +83,3 @@
 </div>
 </body>
 </html>
-
