@@ -5,19 +5,15 @@
 <head>
     <meta charset="UTF-8" />
     <title>회원가입</title>
+    <link rel="stylesheet" href="<c:url value='/resources/css/signup.css' />">
+
+    <!-- 카카오 주소 API 스크립트 추가 (주소 검색을 위한 API) -->
+    <script type="text/javascript" src="https://ssl.daumcdn.net/dmaps/map_js_init/postcode.v2.js"></script>
 
     <script>
         const contextPath = '${pageContext.request.contextPath}';
 
-        function debounce(func, delay) {
-            let timeoutId;
-            return function(...args) {
-                clearTimeout(timeoutId);
-                timeoutId = setTimeout(() => func.apply(this, args), delay);
-            }
-        }
-
-        // 중복확인 버튼 클릭 시 실행되는 함수
+        // 아이디 중복 체크
         function checkIdDuplicate() {
             const id = document.getElementById('userid').value.trim();
             const idError = document.getElementById('idError');
@@ -45,103 +41,128 @@
                 });
         }
 
-        // 아이디 입력 필드에 입력 중일 때 중복확인 메시지 초기화
-        function clearIdError() {
-            document.getElementById('idError').innerText = "";
-        }
-
+        // 비밀번호 유효성 검사
         const checkPassword = debounce(function() {
             const password = document.getElementById('userpw').value;
+            const passwordError = document.getElementById('passwordError');
+
             if (!password) {
-                document.getElementById('passwordError').innerText = "";
+                passwordError.innerText = "";
                 return;
             }
             fetch(contextPath + '/customer/checkPassword?password=' + encodeURIComponent(password))
                 .then(res => res.json())
                 .then(data => {
-                    document.getElementById('passwordError').innerText = data.valid ? "" : data.message;
+                    if (data.valid) {
+                        passwordError.style.color = "green";
+                        passwordError.innerText = "사용할 수 있는 비밀번호입니다.";
+                    } else {
+                        passwordError.style.color = "red";
+                        passwordError.innerText = data.message;
+                    }
                 });
 
             checkRepassword();
         }, 300);
 
+        // 비밀번호 재확인 유효성 검사
         const checkRepassword = debounce(function() {
             const password = document.getElementById('userpw').value;
             const repassword = document.getElementById('repassword').value;
+            const repasswordError = document.getElementById('repasswordError');
+
             if (!repassword) {
-                document.getElementById('repasswordError').innerText = "";
+                repasswordError.innerText = "";
                 return;
             }
+
             fetch(contextPath + '/customer/checkRepassword?password=' + encodeURIComponent(password) + '&repassword=' + encodeURIComponent(repassword))
                 .then(res => res.json())
                 .then(data => {
-                    document.getElementById('repasswordError').innerText = data.valid ? "" : data.message;
+                    if (data.valid) {
+                        repasswordError.style.color = "green";
+                        repasswordError.innerText = "비밀번호가 일치합니다.";
+                    } else {
+                        repasswordError.style.color = "red";
+                        repasswordError.innerText = data.message;
+                    }
                 });
         }, 300);
 
+        // 전화번호 유효성 검사
         const checkPhone = debounce(function() {
             const phone = document.getElementById('userphone').value.trim();
+            const phoneError = document.getElementById('phoneError');
+
             if (!phone) {
-                document.getElementById('phoneError').innerText = "";
+                phoneError.innerText = "";
                 return;
             }
             fetch(contextPath + '/customer/checkPhone?phone=' + encodeURIComponent(phone))
                 .then(res => res.json())
                 .then(data => {
-                    document.getElementById('phoneError').innerText = data.valid ? "" : data.message;
+                    phoneError.innerText = data.valid ? "" : data.message;
                 });
         }, 300);
 
-        window.onload = function() {
-            // 중복확인 버튼 클릭 이벤트 연결
-            document.getElementById('checkIdBtn').addEventListener('click', checkIdDuplicate);
+        // 주소 검색 함수
+        function searchAddress() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    const postcode = data.zonecode;
+                    const addr = data.roadAddress;
+                    const extraAddr = data.bname ? data.bname : '';
+                    document.getElementById('useraddr').value = addr + " " + extraAddr;
+                }
+            }).open();
+        }
 
-            // 아이디 입력시 중복확인 메시지 초기화
-            document.getElementById('id').addEventListener('input', clearIdError);
+        // 디바운스 함수 (일정 시간 지연 후 실행)
+        function debounce(func, delay) {
+            let timeoutId;
+            return function(...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func.apply(this, args), delay);
+            }
         }
     </script>
 </head>
 <body>
-<h2>회원가입</h2>
-<form action="${contextPath}/customer/signup" method="post" id="signupForm">
-	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-    <label for="username">이름:</label>
-    <input type="text" id="username" name="username" value="${memberVO.username}" required />
-    <br/>
+    <div class="signup-container">
+        <form action="${pageContext.request.contextPath}/customer/signup" method="post">
+            <h2>회원가입</h2>
+            <div class="form-group">
+                <label for="userid">아이디</label>
+                <input type="text" id="userid" name="userid" class="form-control" oninput="checkIdDuplicate()">
+                <span id="idError" class="error-message"></span>
+            </div>
 
-    <label for="id">아이디:</label>
-    <input type="text" id="userid" name="userid" value="${memberVO.userid}" required />
-    <button type="button" id="checkIdBtn">중복확인</button>
-    <span id="idError" style="color:red;"></span>
-    <br>
+            <div class="form-group">
+                <label for="userpw">비밀번호</label>
+                <input type="password" id="userpw" name="userpw" class="form-control" oninput="checkPassword()">
+                <span id="passwordError" class="error-message"></span>
+            </div>
 
-    <label for="userpw">비밀번호:</label>
-    <input type="password" id="userpw" name="userpw" oninput="checkPassword()" required />
-    <span id="passwordError" style="color:red;">
-        <c:out value="${errorPassword}" />
-    </span>
-    <br/>
+            <div class="form-group">
+                <label for="repassword">비밀번호 확인</label>
+                <input type="password" id="repassword" name="repassword" class="form-control" oninput="checkRepassword()">
+                <span id="repasswordError" class="error-message"></span>
+            </div>
 
-    <label for="repassword">비밀번호재확인:</label>
-    <input type="password" id="repassword" name="repassword" oninput="checkRepassword()" required />
-    <span id="repasswordError" style="color:red;">
-        <c:out value="${errorRepassword}" />
-    </span>
-    <br/>
+            <div class="form-group">
+                <label for="userphone">전화번호</label>
+                <input type="text" id="userphone" name="userphone" class="form-control" oninput="checkPhone()">
+                <span id="phoneError" class="error-message"></span>
+            </div>
 
-    <label for="userphone">전화번호:</label>
-    <input type="text" id="userphone" name="userphone" value="${memberVO.userphone}" oninput="checkPhone()" required />
-    <span id="phoneError" style="color:red;">
-        <c:out value="${errorPhone}" />
-    </span>
-    <br/>
+            <div class="form-group">
+                <label for="useraddr">주소</label>
+                <input type="text" id="useraddr" name="useraddr" class="form-control">
+                <button type="button" class="btn btn-primary" onclick="searchAddress()">주소 검색</button>
+            </div>
 
-    <label for="useraddr">주소:</label>
-    <input type="text" id="useraddr" name="useraddr" value="${memberVO.useraddr}" required />
-    <br/>
-
-    <button type="submit">회원가입</button>
-</form>
+            <button type="submit" class="btn btn-success">회원가입</button>
+        </form>
+    </div>
 </body>
 </html>
-
