@@ -133,7 +133,7 @@
     <div class="signup-container">
         <form action="${pageContext.request.contextPath}/customer/signup" method="post">
         
-        <!-- 이거 회원가입이 안되서 챗지피티한테 물어보니까 넣으라고 해서 넣으니 되던데 이래도 되는 건가요 -->
+        <!--  -->
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         
             <div class="form-group">
