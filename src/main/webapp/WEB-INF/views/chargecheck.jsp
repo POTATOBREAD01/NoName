@@ -1,6 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="java.time.LocalDate" %>
+
+<%
+    LocalDate now = LocalDate.now();
+    int currentMonth = now.getMonthValue();
+    int currentYear = now.getYear();
+    request.setAttribute("currentMonth", currentMonth);
+    request.setAttribute("currentYear", currentYear);
+%>
+
 <c:set var="user" value="${list[0]}" />
 <!DOCTYPE html>
 <html>
@@ -15,7 +25,7 @@
 
 <script>
 $(document).ready(function () {
-	const address = "${user.useraddr}"
+	const address = "${user.useraddr}";
     const usageMap = {
         1: ${user.month1}, 2: ${user.month2}, 3: ${user.month3},
         4: ${user.month4}, 5: ${user.month5}, 6: ${user.month6},
@@ -23,15 +33,12 @@ $(document).ready(function () {
         10: ${user.month10}, 11: ${user.month11}, 12: ${user.month12}
     };
 
-    // 공공데이터 API 호출 함수
     async function getPublicData(month, address) {
-    	
     	try {
             const response = await fetch("/api/publicPowerUsage?month=" + month + "&address=" + encodeURIComponent(address));
             const json = await response.json();
             const data = json.data;
 
-            // 지역의 평균값 구하기
             let totalHouseCnt = 0;
             let weightedUsageSum = 0;
             let weightedBillSum = 0;
@@ -46,13 +53,10 @@ $(document).ready(function () {
                 weightedBillSum += bill * cnt;
             }
 
-            const avgUsage = weightedUsageSum / totalHouseCnt;
-            const avgBill = weightedBillSum / totalHouseCnt;
-
             return {
-                powerUsage: Math.round(avgUsage),
-                bill: Math.round(avgBill),
-                regionName: json.regionName  // 
+                powerUsage: Math.round(weightedUsageSum / totalHouseCnt),
+                bill: Math.round(weightedBillSum / totalHouseCnt),
+                regionName: json.regionName
             };
         } catch (e) {
             console.error("공공데이터 요청 실패:", e);
@@ -60,21 +64,17 @@ $(document).ready(function () {
         }
 	}
 
-    // 개인요금 계산 함수
     async function fetchCharges(use) {
-    try {
-        const res = await fetch(`/api/calculateCharges?usage=`+use);
-        const data = await res.json();
-        return data;
-    } catch (e) {
-        console.error("Failed to fetch charges:", e);
-        return null;
+        try {
+            const res = await fetch(`/api/calculateCharges?usage=` + use);
+            const data = await res.json();
+            return data;
+        } catch (e) {
+            console.error("Failed to fetch charges:", e);
+            return null;
+        }
     }
-}
-	
 
-    
-    // 메인 업데이트 함수 (비동기)
     async function updateCharges(month) {
     	const use = usageMap[month];
         if (!use || isNaN(use)) {
@@ -87,7 +87,7 @@ $(document).ready(function () {
         const startDate = prevMonth + "/18";
         const endDate = month + "/17";
         const publicData = await getPublicData(month, address);
-        const regionName = publicData.regionName; // 응답에서 바로 사용
+        const regionName = publicData.regionName;
 
         $("#usagePeriod").text(startDate + " ~ " + endDate);
         $(".this_month").text(use.toLocaleString());
@@ -110,8 +110,6 @@ $(document).ready(function () {
         $("#addedTax").text(charges.addedTax.toLocaleString());
         $("#totalCharge").text(charges.totalCharge.toLocaleString());
 
-        
-        
         const ctx = document.getElementById('powerChart').getContext('2d');
         if (window.powerChart instanceof Chart) {
             window.powerChart.destroy();
@@ -140,9 +138,7 @@ $(document).ready(function () {
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                let label = context.dataset.label || '';
-                                let value = context.raw;
-                                return label + ': ' + value.toLocaleString();
+                                return context.dataset.label + ': ' + context.raw.toLocaleString();
                             }
                         }
                     }
@@ -159,18 +155,15 @@ $(document).ready(function () {
         });
     }
 
-    // 초기 설정: 현재 월
     const currentMonth = new Date().getMonth() + 1;
     $("#mon").val(currentMonth);
     updateCharges(currentMonth);
 
-    // 월 변경 이벤트
     $("#mon").on("change", function () {
         const month = parseInt($(this).val());
         updateCharges(month);
     });
 
-    // 접기/펼치기 기능 (기존 코드 유지)
     $(".hide_button").on("click", function () {
         const $button = $(this);
         const $table = $button.closest("table");
@@ -199,9 +192,8 @@ window.onload = function () {
 </head>
 <body>
 
-
-<div>
 <!-- 고객 정보 -->
+<div>
 <table>
 	<tr><th class="l_table">고객정보</th><th class="r_table"></th></tr>
 	<tr>
@@ -242,8 +234,8 @@ window.onload = function () {
 		<td class="select2">
 			<select name="month" id="mon">
 				<option value="" disabled>-선택-</option>
-				<c:forEach begin="1" end="12" var="i">
-					<option value="${i}">${i}월</option>
+				<c:forEach begin="1" end="${currentMonth}" var="i">
+					<option value="${i}">${currentYear}년 ${i}월</option>
 				</c:forEach>
 			</select>
 		</td>
@@ -265,8 +257,9 @@ window.onload = function () {
 	<tr><td colspan="2" class="l_table annotation">※예상 청구금액은 실제 요금과 다를 수 있습니다.</td></tr>
 </table>
 </div>
-<br>
+
 <!-- 그래프 -->
+<br>
 <div id="graph">
 	<canvas id="powerChart" width="400" height="300"></canvas>
 </div>
@@ -277,7 +270,6 @@ window.onload = function () {
         <button type="submit">메인화면 이동</button>
     </form>
 </div>
-
 
 </body>
 </html>
