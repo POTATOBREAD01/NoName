@@ -102,4 +102,8 @@
         #{month7}, #{month8}, #{month9}, #{month10}, #{month11}, #{month12}
     )
 </insert>
+
+<select id="getAllUsernos" resultType="string">
+    SELECT userno FROM tbl_member
+</select>
 </mapper>

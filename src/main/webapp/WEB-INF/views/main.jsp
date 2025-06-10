@@ -64,6 +64,7 @@
         </p> --%>
         <p style="font-weight: bold; font-size: 16px;">
             반갑습니다. <sec:authentication property="principal.member.username"/>님.<br/>
+            고객번호는 '상세요금조회'에서 확인하실 수 있습니다.
         </p>
     </sec:authorize>
 </div>

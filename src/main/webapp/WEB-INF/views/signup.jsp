@@ -312,9 +312,7 @@
 	    $('#signupForm').submit(function(e) {
 	        let errorMessages = [];
 
-	        if (!isUsernoAvailable) {
-	            errorMessages.push('고객번호를 확인해주세요.');
-	        }
+	    
 	        if (!isUseridAvailable) {
 	            errorMessages.push('아이디를 확인해주세요.');
 	        }
@@ -354,7 +352,8 @@
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         	<!-- 고객번호 -->
         	<div class="form-group">
-				<input type="text" id="userno" name="userno" class='form-control' placeholder="고객번호 입력" oninput="checkUsernoDuplicate()" />
+        		<span class="text">&lt;고객번호&gt;</span><br>
+				<input type="" readonly id="userno" name="userno" class='form-control' placeholder="고객번호" oninput="checkUsernoDuplicate()" />
         	</div>
         	<span id="usernoCheckMsg" style="white-space: pre-line;"></span>
         	<!-- 아이디 -->
@@ -453,6 +452,24 @@ document.addEventListener('DOMContentLoaded', () => {
     togglePasswordVisibility('togglePw', 'userpw');
     togglePasswordVisibility('toggleRePw', 'repassword');
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("${pageContext.request.contextPath}/customer/generateUserno")
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById("userno").value = data.userno;
+               
+            } else {
+                
+            }
+        })
+        .catch(err => {
+            
+        });
+});
+
 
 </script>
 </body>

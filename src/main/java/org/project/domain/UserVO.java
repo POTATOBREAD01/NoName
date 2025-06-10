@@ -9,6 +9,7 @@ public class UserVO {
 	private String userpw;
 	private String userphone;
 	private String useraddr;
+	private String userno;
 	
 	private int month1;
 	private int month2;

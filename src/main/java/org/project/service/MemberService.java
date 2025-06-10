@@ -79,4 +79,8 @@ public class MemberService {
     public MemberVO searchCustomerByUserno(String userno) {
         return memberMapper.searchCustomerByUserno(userno);
     }
+    
+    public List<String> getAllUsernos() {
+        return memberMapper.getAllUsernos();
+    }
 }

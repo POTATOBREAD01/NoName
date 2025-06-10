@@ -9,9 +9,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpSession;
 
@@ -24,7 +27,7 @@ public class CustomerController {
     
     @Autowired
     private EmailService emailService;
-
+      
     // 회원가입 폼
     @GetMapping("/signup")
     public String showSignupForm(Model model) {
@@ -32,6 +35,40 @@ public class CustomerController {
         return "signup";
     }
 
+    
+    @GetMapping("/generateUserno")
+    @ResponseBody
+    public Map<String, Object> generateUserno() {
+        Map<String, Object> result = new HashMap<>();
+
+        // 1. 이미 사용 중인 고객번호 목록 조회
+        List<String> usedUsernos = memberService.getAllUsernos(); // 예: ["1111", "1114", "1471", "1235"]
+
+        // 2. 후보 번호 리스트 생성
+        List<String> candidates = new ArrayList<>();
+        for (int i = 0; i <= 9999; i++) {
+            String userno = String.format("%04d", i);
+            if (!usedUsernos.contains(userno)) {
+                candidates.add(userno);
+            }
+        }
+
+        // 3. 후보가 없다면 오류 반환
+        if (candidates.isEmpty()) {
+            result.put("success", false);
+            result.put("message", "사용 가능한 고객번호가 없습니다.");
+            return result;
+        }
+
+        // 4. 랜덤하게 하나 선택
+        Collections.shuffle(candidates);
+        String newUserno = candidates.get(0);
+
+        result.put("success", true);
+        result.put("userno", newUserno);
+        return result;
+    }
+    	
     // 회원가입 처리
     @PostMapping("/signup")
     public String signup(@ModelAttribute MemberVO memberVO,

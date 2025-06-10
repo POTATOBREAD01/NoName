@@ -215,6 +215,10 @@ window.onload = function () {
 					<div class="l_table">주소</div>
 					<div class="value">${user.useraddr}</div>
 				</div>
+				<div class="innerdiv">
+					<div class="l_table">고객번호</div>
+					<div class="value">${user.userno}</div>
+				</div>
 			</div>
 		</td>
 	</tr>

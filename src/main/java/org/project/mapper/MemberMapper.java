@@ -17,4 +17,6 @@ public interface MemberMapper {
     void deleteCustomer(String userid);               // 고객 삭제
     List<MemberVO> getAllCustomers();                 // 전체 고객 목록
     MemberVO searchCustomerByUserno(String userno);   // 고객번호로 검색
+    
+    List<String> getAllUsernos();
 }
