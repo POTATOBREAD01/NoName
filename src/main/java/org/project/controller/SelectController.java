@@ -29,20 +29,21 @@ public class SelectController {
 
     // 2. 고객 검색 처리
     @GetMapping("/searchCustomer.do")
-    public String searchMember(@RequestParam("keyword") String keyword, Model model) {
-        if (keyword == null || keyword.trim().isEmpty()) {
+    public String searchMember(@RequestParam("userno") String userno, Model model) {
+        if (userno == null || userno.trim().isEmpty()) {
             model.addAttribute("members", Collections.emptyList());
-            model.addAttribute("message", "검색어를 입력해주세요.");
+            model.addAttribute("message", "고객번호를 입력해주세요.");
             return "select";
         }
 
-        // 메서드 이름은 customer로 유지
-        List<MemberVO> members = memberMapper.searchCustomers(keyword);
-        if (members.isEmpty()) {
+        MemberVO member = memberMapper.searchCustomerByUserno(userno);
+        
+        if (member == null) {
+        	model.addAttribute("members", Collections.emptyList());
             model.addAttribute("message", "일치하는 회원이 없습니다.");
+        } else {
+            model.addAttribute("members", Collections.singletonList(member)); // ✅ 리스트로 감싸기
         }
-
-        model.addAttribute("members", members);
         return "select";
     }
 

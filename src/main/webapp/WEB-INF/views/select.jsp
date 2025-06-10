@@ -23,9 +23,9 @@
         </c:if>
 
         <!-- 검색 폼 -->
-        <form class="search-form" method="get" action="<c:url value='/customer/searchCustomer' />" onsubmit="return validateSearch()">
-            <input type="text" name="keyword" id="keyword" placeholder="아이디, 성명 검색"
-                   value="${param.keyword != null ? param.keyword : ''}" />
+        <form class="search-form" method="get" action="<c:url value='/searchCustomer.do' />" onsubmit="return validateSearch()">
+            <input type="text" name="userno" id="userno" placeholder="고객 번호 검색"
+                   value="${param.userno != null ? param.userno : ''}" />
             <button type="submit">🔍</button>
         </form>
 
@@ -55,7 +55,7 @@
                 <c:forEach var="member" items="${members}">
                     <div class="member-card">
                         <div class="member-info">
-                            <div><strong>아이디</strong><br>${member.userid}</div>
+                            <div><strong>고객번호</strong><br>${member.userno}</div>
                             <div><strong>성명</strong><br>${member.username}</div>
                             <div><strong>전화번호</strong><br>${member.userphone}</div>
                             <div><strong>주소</strong><br>${member.useraddr}</div>

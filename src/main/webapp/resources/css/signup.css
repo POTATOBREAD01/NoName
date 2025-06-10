@@ -79,3 +79,39 @@
 	.center-button button:hover {
    	background-color: #003d80;
 	}
+	.input-wrapper {
+  	position: relative;
+  	width: 280px;
+	}
+	
+	.eye {
+  	position: absolute;
+  	top: 58%;
+  	right: 10px;
+  	transform: translateY(-50%);
+  	cursor: pointer;
+  	color: #888;
+  	font-size: 1.1em;
+	}	
+	
+	.btn-secondary{
+	width:140px;
+	height:28px;
+	box-sizing:border-box;
+	border-radius: 5px;
+	border:none;
+	margin-top:10px;
+	color:white;
+	}
+	#sendAuthCodeBtn{
+	background-color:#9c9c9c;
+	}
+	.disable{
+	background-color:#cfcfcf;
+	}
+	.enable{
+	background-color:#00d351;
+	}
+	.enable_ok{
+	background-color:#008834;
+	}

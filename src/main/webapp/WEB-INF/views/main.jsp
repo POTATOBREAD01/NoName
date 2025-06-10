@@ -11,17 +11,27 @@
 <body>
 <h1>메인메뉴</h1>
 <div class="menu-container">
-	<a href="/customLogin" class="menu-item">
-        <div class="menu-icon">L</div>
-        <div><strong>로그인</strong></div>
-    </a>
+
+	<sec:authorize access="isAnonymous()">
+        <a href="/customLogin" class="menu-item">
+        	<div class="menu-icon">L.I/S</div>
+        	<div><strong>로그인/회원가입</strong></div>
+    	</a>
+    </sec:authorize>
+    <sec:authorize access="isAuthenticated()">
+        <a href="/customLogout" class="menu-item">
+        	<div class="menu-icon">L.O</div>
+        	<div><strong>로그아웃</strong></div>
+    	</a>
+    </sec:authorize>
+    
     <a href="/electric_fee.do" class="menu-item">
         <div class="menu-icon">E</div>
         <div><strong>전기요금표</strong></div>
     </a>
     <a href="/selectCustomer.do" class="menu-item">
         <div class="menu-icon">C</div>
-        <div><strong>고객번호/조회</strong><br/></div>
+        <div><strong>고객번호로 조회</strong><br/></div>
     </a>
     <a href="/chargecheck" class="menu-item">
         <div class="menu-icon">Q</div>
@@ -32,22 +42,23 @@
         <div><strong>요금납부</strong><br/>증명서 출력</div>
     </a>
 </div>
-<a href="/customer/signup">회원가입</a>
 <!-- 로그인 여부에 따라 다른 메시지 출력 -->
 <div style="margin-bottom: 20px">
     <sec:authorize access="isAnonymous()">
-        <p style="color: gray; font-size: 14px;">※ 로그인 시 간단한 데이터 출력해드립니다.</p>
+        <p style="color: gray; font-size: 14px;">※ 상세 요금 조회는 로그인 시 이용 가능합니다.</p>
     </sec:authorize>
     
     <sec:authorize access="isAuthenticated()">
-        <p style="font-weight: bold; font-size: 16px;">
+        <%-- <p style="font-weight: bold; font-size: 16px;">
             사용자 ID : <sec:authentication property="principal.username"/><br/>
             사용자 이름 : <sec:authentication property="principal.member.username"/><br/>
             사용자 주소 : <sec:authentication property="principal.member.useraddr"/><br/>
             사용자 전화번호 : <sec:authentication property="principal.member.userphone"/><br/>
             사용자 권한 리스트 : <sec:authentication property="principal.member.authList"/>
+        </p> --%>
+        <p style="font-weight: bold; font-size: 16px;">
+            반갑습니다. <sec:authentication property="principal.member.username"/>님.<br/>
         </p>
-        <a href="/customLogout">로그아웃</a>
     </sec:authorize>
 </div>
 </body>

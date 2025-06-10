@@ -11,7 +11,10 @@ public class MemberVO {
 	private String username;
 	private String useraddr;
 	private String userphone;
+	private String userno;
+	private String useremail;
 	private boolean enabled;
+	private String proofno;
 	
 	private List<AuthVO> authList;
 	

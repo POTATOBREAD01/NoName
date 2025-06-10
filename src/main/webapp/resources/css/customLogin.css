@@ -1,12 +1,12 @@
 @charset "UTF-8";
 
-body {
+	body {
     font-family: "Noto Sans KR", sans-serif; /* 한글 웹폰트 */
     background-color: #f0f1f2; /* 연한 회색 배경 */
     margin:0;
     padding: 40px;
 	}	
-	h1,h2{
+	h1,h2,h3{
 	margin:auto;
 	text-align:center;
 	}
@@ -14,7 +14,7 @@ body {
 	width:400px;
 	background-color:#f7f8f9;
 	border-spacing:0;
-	border:none;
+	border: 1px solid #ddd;
 	border-radius:30px;
 	padding:20px;
 	margin:auto;
@@ -34,6 +34,7 @@ body {
 	border:none;
 	border-bottom:2px solid black;
 	outline: none;
+	padding-right: 40px; /* 오른쪽 여백 확보 (아이콘 공간) */
 	}
 	.inputbox:focus{
 	border-bottom:2px solid #81adff;
@@ -55,6 +56,16 @@ body {
 	color:white;
 	font-weight:bold;
 	}
+	.submitbox2{
+	width:280px;
+	height:40px;
+	box-sizing:border-box;
+	background-color:#f7f8f9;
+	border-radius: 5px;
+	border: 1px solid #ddd;
+	color:black;
+	font-weight:bold;
+	}
 	.center-button {
    	display: flex;
     justify-content: center;
@@ -73,3 +84,21 @@ body {
 	.center-button button:hover {
    	background-color: #003d80;
 	}
+	.eye {
+    cursor: pointer;
+    /* 눈 아이콘 스타일 */
+  	}
+  	.input-wrapper {
+  	position: relative;
+  	width: 100%;
+	}
+	.eye {
+  	position: absolute;
+  	right: 12px;
+  	top: 58%;
+  	transform: translateY(-50%);
+  	cursor: pointer;
+  	color: #888;
+  	font-size: 1.1em;
+	}
+	

@@ -86,7 +86,7 @@ private final String API_KEY = "N4eVLJia24G8FILFhuSldJ65E0nmIcd0j29P7Y9r";
         try {
             // API 호출 결과를 문자열로 받아서 그대로 리턴
         	String rawJson = restTemplate.getForObject(url, String.class);
-            // Jackson 사용해서 JSON 파싱 (권장)
+            // Jackson 사용해서 JSON 파싱
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(rawJson);
             JsonNode dataNode = root.get("data");

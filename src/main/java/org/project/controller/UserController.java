@@ -1,3 +1,4 @@
+
 package org.project.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public String view(Model model) {
 
 		// Mapper 호출 및 결과 처리
 		List<UserVO> list = userMapper.view(userid);
-		model.addAttribute("list", list);
+		model.addAttribute("list", list); 
 		
 		return "chargecheck";
 	}

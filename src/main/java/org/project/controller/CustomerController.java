@@ -1,6 +1,7 @@
 package org.project.controller;
 
 import org.project.domain.MemberVO;
+import org.project.service.EmailService;
 import org.project.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,9 @@ public class CustomerController {
 
     @Autowired
     private MemberService memberService;
+    
+    @Autowired
+    private EmailService emailService;
 
     // 회원가입 폼
     @GetMapping("/signup")
@@ -32,10 +36,20 @@ public class CustomerController {
     @PostMapping("/signup")
     public String signup(@ModelAttribute MemberVO memberVO,
                          @RequestParam String repassword,
-                         Model model) {
+                         Model model,
+                         HttpSession session) {
 
         boolean hasError = false;
 
+        // 고객번호 유효성 및 중복 검사
+        if (memberVO.getUserno() == null || !memberVO.getUserno().matches("^\\d{4,10}$")) {
+            model.addAttribute("errorUserno", "고객번호는 4~10자리 숫자여야 합니다.");
+            hasError = true;
+        } else if (memberService.isUsernoExist(memberVO.getUserno())) {
+            model.addAttribute("errorUserno", "이미 사용 중인 고객번호입니다.");
+            hasError = true;
+        }
+        
         // 아이디 유효성 및 중복 검사
         if (memberVO.getUserid() == null || !memberVO.getUserid().matches("^[a-zA-Z0-9]{4,16}$")) {
             model.addAttribute("errorId", "아이디는 4~16자의 영문자 또는 숫자만 허용됩니다.");
@@ -63,13 +77,31 @@ public class CustomerController {
             hasError = true;
         }
 
+        // 이메일 인증 여부 확인
+        Boolean emailVerified = (Boolean) session.getAttribute("emailVerified");
+        if (emailVerified == null || !emailVerified) {
+            model.addAttribute("errorEmail", "이메일 인증이 완료되지 않았습니다.");
+            hasError = true;
+        }
+        
+        // 주소 유효성 검사
+        if (memberVO.getUseraddr() == null || memberVO.getUseraddr().trim().isEmpty()) {
+            model.addAttribute("errorAddr", "주소를 입력해주세요.");
+            hasError = true;
+        }
+        
         if (hasError) {
             model.addAttribute("memberVO", memberVO);
             return "signup";
         }
-
         // 회원 가입 처리
         memberService.registerCustomer(memberVO);
+        
+        // 이메일 인증 관련 세션 초기화
+        session.removeAttribute("emailAuthCode");
+        session.removeAttribute("emailForAuth");
+        session.removeAttribute("emailVerified");
+        
         return "redirect:/customer/success";
     }
 
@@ -148,28 +180,6 @@ public class CustomerController {
         }
         return result;
     }
-    
-    @GetMapping("/searchCustomer")
-    public String searchCustomer(@RequestParam(required = false) String keyword, Model model, HttpSession session) {
-        List<MemberVO> newMembers = memberService.searchCustomer(keyword == null ? "" : keyword);
-        List<MemberVO> sessionMembers = (List<MemberVO>) session.getAttribute("members");
-
-        if (sessionMembers == null) {
-            session.setAttribute("members", newMembers);
-        } else {
-            for (MemberVO m : newMembers) {
-                boolean exists = sessionMembers.stream().anyMatch(sc -> sc.getUserid() == m.getUserid());
-                if (!exists) {
-                    sessionMembers.add(m);
-                }
-            }
-            session.setAttribute("members", sessionMembers);
-        }
-
-        model.addAttribute("members", session.getAttribute("members"));
-        model.addAttribute("keyword", keyword);
-        return "select";
-    }
 
     @GetMapping("/select")
     public String select(Model model, HttpSession session) {
@@ -200,5 +210,88 @@ public class CustomerController {
         MemberVO member = memberService.getCustomerByUserid(userid);
         model.addAttribute("member", member);
         return "proof";
+    }
+    
+    // 이메일 인증 코드 전송
+    @GetMapping("/sendAuthCode")
+    @ResponseBody
+    public Map<String, Object> sendAuthCode(@RequestParam String email, HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            String authCode = emailService.sendVerificationMail(email);
+            session.setAttribute("emailAuthCode", authCode);     // 통일된 네임
+            session.setAttribute("emailForAuth", email);         // 통일된 네임
+            session.setAttribute("emailVerified", false);        // 통일된 네임
+            result.put("success", true);
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("message", "메일 발송 실패: " + e.getMessage());
+        }
+
+        return result;
+    }
+    
+    // 이메일 인증 코드 확인
+    @PostMapping("/verifyAuthCode")
+    @ResponseBody
+    public Map<String, Object> verifyAuthCode(@RequestParam String inputCode, HttpSession session) {
+        Map<String, Object> result = new HashMap<>();
+
+        String authCode = (String) session.getAttribute("emailAuthCode");
+        if (authCode != null && authCode.equals(inputCode)) {
+            session.setAttribute("emailVerified", true);
+            result.put("valid", true);
+        } else {
+            result.put("valid", false);
+            result.put("message", "인증 코드가 일치하지 않습니다.");
+        }
+
+        return result;
+    }
+    
+    // 이메일 중복 확이
+    @GetMapping("/checkEmail")
+    @ResponseBody
+    public Map<String, Object> checkEmail(@RequestParam String email) {
+        Map<String, Object> result = new HashMap<>();
+
+        if (email == null || !email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
+            result.put("valid", false);
+            result.put("message", "이메일 형식이 올바르지 않습니다.");
+            return result;
+        }
+
+        boolean exists = memberService.isEmailExist(email); // 이메일 중복 확인 메서드 필요
+        if (exists) {
+            result.put("valid", false);
+            result.put("message", "이미 등록된 이메일입니다.");
+        } else {
+            result.put("valid", true);
+        }
+        return result;
+    }
+    
+    // 고객번호 중복 확인
+    @GetMapping("/checkUserno")
+    @ResponseBody
+    public Map<String, Object> checkUserno(@RequestParam String userno) {
+        Map<String, Object> result = new HashMap<>();
+
+        if (userno == null || !userno.matches("^\\d{4,10}$")) {
+            result.put("valid", false);
+            result.put("message", "고객번호는 4~10자리의 숫자여야 합니다.");
+            return result;
+        }
+
+        boolean exists = memberService.isUsernoExist(userno); // service 메서드 호출
+        if (exists) {
+            result.put("valid", false);
+            result.put("message", "이미 등록된 고객번호입니다.");
+        } else {
+            result.put("valid", true);
+        }
+
+        return result;
     }
 }
