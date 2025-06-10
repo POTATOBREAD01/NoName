@@ -18,11 +18,14 @@
                 <td>${member.proofno}</td>
                 <th>증명서 사용목적</th>
                 <td>
-                    <select id="purposeSelect" onchange="updatePurposeText()">
-                        <option value="세무서 제출용">세무서 제출용</option>
-                        <option value="개인 지참용">개인 지참용</option>
-                    </select>
-                </td>
+    			<label>
+        			<input type="radio" name="purpose" value="세무서 제출용" checked onclick="updatePurposeText(this)"> 세무서 제출용
+    			</label>
+    			<label>
+        			<input type="radio" name="purpose" value="개인 지참용" onclick="updatePurposeText(this)"> 개인 지참용
+    			</label>
+    			<span id="selectedPurposeText" class="print-only"></span>
+			</td>
             </tr>
         </table>
     </section>
