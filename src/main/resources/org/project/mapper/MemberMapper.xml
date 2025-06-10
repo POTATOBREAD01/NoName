@@ -5,11 +5,26 @@
 
   <resultMap type="org.project.domain.MemberVO" id="memberMap">
     <id property="userid" column="userid"/>
-    <result property="userno" column="userno"/>    <!-- userno 추가 -->
+    <result property="userno" column="userno"/>
     <result property="userpw" column="userpw"/>
     <result property="username" column="username"/>
     <result property="useraddr" column="useraddr"/>
     <result property="userphone" column="userphone"/>
+
+    <!-- 전기 사용량 매핑 추가 -->
+    <result property="month1" column="month1"/>
+    <result property="month2" column="month2"/>
+    <result property="month3" column="month3"/>
+    <result property="month4" column="month4"/>
+    <result property="month5" column="month5"/>
+    <result property="month6" column="month6"/>
+    <result property="month7" column="month7"/>
+    <result property="month8" column="month8"/>
+    <result property="month9" column="month9"/>
+    <result property="month10" column="month10"/>
+    <result property="month11" column="month11"/>
+    <result property="month12" column="month12"/>
+
     <collection property="authList" resultMap="authMap"/>
   </resultMap>
 
@@ -22,16 +37,18 @@
   <select id="read" resultMap="memberMap" parameterType="string">
     SELECT 
       mem.userid, 
-      mem.userno,              <!-- userno 추가 -->
+      mem.userno,
       mem.userpw, 
       mem.username,
       mem.useraddr,
       mem.userphone,
-      mem.enabled, 
+      mem.enabled,
+      eb.month1, eb.month2, eb.month3, eb.month4, eb.month5, eb.month6,
+      eb.month7, eb.month8, eb.month9, eb.month10, eb.month11, eb.month12,
       auth.auth
     FROM tbl_member AS mem
-    LEFT JOIN tbl_member_auth AS auth 
-      ON mem.userid = auth.userid
+    LEFT JOIN elect_bill eb ON mem.userid = eb.userid
+    LEFT JOIN tbl_member_auth auth ON mem.userid = auth.userid
     WHERE mem.userid = #{userid}
   </select>
 
@@ -74,7 +91,7 @@
   </delete>
 
   <!-- 전체 고객 목록 조회 -->
-  <select id="getAllCustomers" resultType="org.project.domain.MemberVO">
+  <select id="getAllCustomers" resultMap="memberMap">
     SELECT 
       m.userid, m.userno, m.userpw, m.username, m.useraddr, m.userphone, m.enabled,
       e.month1, e.month2, e.month3, e.month4, e.month5, e.month6, e.month7, e.month8, e.month9, e.month10, e.month11, e.month12
