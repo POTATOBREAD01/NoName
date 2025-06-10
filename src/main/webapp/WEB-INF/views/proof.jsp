@@ -1,5 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="java.time.LocalDate" %>
+<%
+    LocalDate now = LocalDate.now();
+    int currentMonth = now.getMonthValue();
+    int currentYear = now.getYear();
+    request.setAttribute("currentMonth", currentMonth);
+    request.setAttribute("currentYear", currentYear);
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,14 +26,14 @@
                 <td>${member.proofno}</td>
                 <th>증명서 사용목적</th>
                 <td>
-    			<label>
-        			<input type="radio" name="purpose" value="세무서 제출용" checked onclick="updatePurposeText(this)"> 세무서 제출용
-    			</label>
-    			<label>
-        			<input type="radio" name="purpose" value="개인 지참용" onclick="updatePurposeText(this)"> 개인 지참용
-    			</label>
-    			<span id="selectedPurposeText" class="print-only"></span>
-			</td>
+                    <label>
+                        <input type="radio" name="purpose" value="세무서 제출용" checked onclick="updatePurposeText(this)"> 세무서 제출용
+                    </label>
+                    <label>
+                        <input type="radio" name="purpose" value="개인 지참용" onclick="updatePurposeText(this)"> 개인 지참용
+                    </label>
+                    <span id="selectedPurposeText" class="print-only"></span>
+                </td>
             </tr>
         </table>
     </section>
@@ -53,15 +61,17 @@
             </thead>
             <tbody>
                 <c:forEach var="usage" items="${member.monthlyUsage}" varStatus="status">
-    				<c:set var="month" value="${status.index + 1}" />
-    				<c:set var="monthStr" value="${month lt 10 ? '0' + month : month}" />
-    				<tr>
-        				<td>2024.${monthStr}</td>
-        				<td>${usage}</td>
-        				<td>${realCharges[status.index]}</td>
-        				<td>2024.${monthStr}.25</td>
-    				</tr>
-				</c:forEach>
+                    <c:set var="month" value="${status.index + 1}" />
+                    <c:if test="${month <= currentMonth}">
+                        <c:set var="monthStr" value="${month lt 10 ? '0' + month : month}" />
+                        <tr>
+                            <td>${currentYear}.${monthStr}</td>
+                            <td>${usage}</td>
+                            <td>${realCharges[status.index]}</td>
+                            <td>${currentYear}.${monthStr}.25</td>
+                        </tr>
+                    </c:if>
+                </c:forEach>
             </tbody>
         </table>
         <div class="button-area">
