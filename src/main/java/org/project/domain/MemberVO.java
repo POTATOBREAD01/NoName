@@ -32,20 +32,10 @@ public class MemberVO {
     private int month12;
 
     // 12개월 사용량을 배열로 반환하는 메서드
-    public int[] getMonthlyUsage() {
-        return new int[] {
-            month1,
-            month2,
-            month3,
-            month4,
-            month5,
-            month6,
-            month7,
-            month8,
-            month9,
-            month10,
-            month11,
-            month12
-        };
+    public List<Integer> getMonthlyUsage() {
+        return java.util.Arrays.asList(
+            month1, month2, month3, month4, month5, month6,
+            month7, month8, month9, month10, month11, month12
+        );
     }
 }

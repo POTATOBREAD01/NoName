@@ -15,7 +15,7 @@
         <table class="info-table">
             <tr>
                 <th>발급번호</th>
-                <td>2013 286</td>
+                <td>${member.proofno}</td>
                 <th>증명서 사용목적</th>
                 <td>
                     <select id="purposeSelect" onchange="updatePurposeText()">
@@ -53,10 +53,10 @@
     				<c:set var="month" value="${status.index + 1}" />
     				<c:set var="monthStr" value="${month lt 10 ? '0' + month : month}" />
     				<tr>
-        				<td>2025.${monthStr}</td>
+        				<td>2024.${monthStr}</td>
         				<td>${usage}</td>
         				<td>${realCharges[status.index]}</td>
-        				<td>2025.${monthStr}.25</td>
+        				<td>2024.${monthStr}.25</td>
     				</tr>
 				</c:forEach>
             </tbody>

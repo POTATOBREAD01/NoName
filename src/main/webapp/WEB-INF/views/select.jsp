@@ -63,7 +63,7 @@
 
                         <div class="button-group">
                             <!-- 증명서 출력 -->
-                            <form method="get" action="<c:url value='/customer/proof' />" class="output-form" style="display:inline;">
+                            <form method="get" action="<c:url value='/proof.do' />" class="output-form" style="display:inline;">
                                 <input type="hidden" name="userid" value="${member.userid}" />
                                 <button type="submit" class="action-button">증명서 출력</button>
                             </form>

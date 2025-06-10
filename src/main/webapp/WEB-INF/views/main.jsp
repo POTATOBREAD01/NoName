@@ -29,18 +29,24 @@
         <div class="menu-icon">E</div>
         <div><strong>전기요금표</strong></div>
     </a>
-    <a href="/selectCustomer.do" class="menu-item">
-        <div class="menu-icon">C</div>
-        <div><strong>고객번호로 조회</strong><br/></div>
-    </a>
-    <a href="/chargecheck" class="menu-item">
-        <div class="menu-icon">Q</div>
-        <div><strong>요금조회</strong></div>
-    </a>
-    <a href="/proof.do" class="menu-item">
-        <div class="menu-icon">P</div>
-        <div><strong>요금납부</strong><br/>증명서 출력</div>
-    </a>
+    <sec:authorize access="isAnonymous()">
+    	<a href="/selectCustomer.do" class="menu-item">
+        	<div class="menu-icon">C</div>
+	        <div><strong>고객번호로 조회</strong><br/></div>
+    	</a>
+    </sec:authorize>
+    <sec:authorize access="isAuthenticated()">
+    	<a href="/proof.do" class="menu-item">
+        	<div class="menu-icon">P</div>
+        	<div><strong>요금납부</strong><br/>증명서 출력</div>
+    	</a>
+    	<a href="/chargecheck" class="menu-item">
+        	<div class="menu-icon">Q</div>
+        	<div><strong>상세요금조회</strong></div>
+    	</a>
+    </sec:authorize>
+    
+    
 </div>
 <!-- 로그인 여부에 따라 다른 메시지 출력 -->
 <div style="margin-bottom: 20px">
