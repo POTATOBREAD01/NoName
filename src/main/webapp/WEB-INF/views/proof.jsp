@@ -22,8 +22,8 @@
     <section class="section">
         <table class="info-table">
             <tr>
-                <th>발급번호</th>
-                <td>${member.proofno}</td>
+                <th>고객번호</th>
+                <td>${member.userno}</td>
                 <th>증명서 사용목적</th>
                 <td>
                     <label>
