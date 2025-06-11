@@ -26,13 +26,15 @@
                 <td>${member.userno}</td>
                 <th>증명서 사용목적</th>
                 <td>
-                    <label>
-                        <input type="radio" name="purpose" value="세무서 제출용" checked onclick="updatePurposeText(this)"> 세무서 제출용
-                    </label>
-                    <label>
-                        <input type="radio" name="purpose" value="개인 지참용" onclick="updatePurposeText(this)"> 개인 지참용
-                    </label>
-                    <span id="selectedPurposeText" class="print-only"></span>
+                    <div class="radio-options">
+                        <label>
+                            <input type="radio" name="purpose" value="세무서 제출용" checked onclick="updatePurposeText(this)"> 세무서 제출용
+                        </label>
+                        <label>
+                            <input type="radio" name="purpose" value="개인 지참용" onclick="updatePurposeText(this)"> 개인 지참용
+                        </label>
+                    </div>
+                    <span id="selectedPurposeText" class="print-only">개인 지참용</span>
                 </td>
             </tr>
         </table>
@@ -74,6 +76,7 @@
                 </c:forEach>
             </tbody>
         </table>
+
         <div class="button-area">
             <button class="print" onclick="window.print();">인쇄</button>
             <button class="print-list" onclick="location.href='<c:url value="/main.do" />'">메인페이지 이동</button>

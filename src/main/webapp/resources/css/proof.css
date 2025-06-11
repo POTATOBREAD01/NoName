@@ -45,6 +45,7 @@ h2 {
     border: 1px solid #ddd;
     padding: 10px;
     font-size: 14px;
+    vertical-align: middle; /* 셀 내용 수직 정렬 */
 }
 
 /* 정보 테이블 스타일 */
@@ -70,7 +71,6 @@ h2 {
     margin-top: 20px;
 }
 
-/* 공통 버튼 스타일 */
 .button-area button {
     padding: 10px 20px;
     font-size: 14px;
@@ -81,7 +81,6 @@ h2 {
     transition: background-color 0.2s ease;
 }
 
-/* 버튼 색상 분리 */
 .button-area .print {
     background-color: #6c757d;
     color: white;
@@ -96,27 +95,40 @@ h2 {
     opacity: 0.9;
 }
 
-.print-only {
-    display: none;  /* 화면에서는 숨김 */
+/* 라디오 버튼 정렬 */
+.radio-options label {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 10px;
 }
 
+.radio-options input[type="radio"] {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* 인쇄 전용 요소 */
+.print-only {
+    display: none;
+}
+
+/* 인쇄 모드 스타일 */
 @media print {
     .print-only {
-        display: block;  /* 인쇄 시에만 표시 */
+        display: inline-block;       /* 인쇄 시 표시 */
         font-weight: bold;
-        margin-bottom: 15px;
+        vertical-align: middle;      /* ✅ 핵심: 수직 중앙 정렬 */
+        line-height: 1.6;            /* ✅ 선택: 높이 조정 */
+        margin: 0;                   /* 인쇄 시 불필요한 여백 제거 */
     }
 
-    /* 버튼 숨기기 */
-    .button-area, .radio-options {
+    .button-area,
+    .radio-options {
         display: none !important;
     }
 
-    /* 라디오 버튼과 라벨 숨기기 */
     input[type="radio"],
     label {
-        display: none;
+        display: none !important;
     }
 }
-
-
