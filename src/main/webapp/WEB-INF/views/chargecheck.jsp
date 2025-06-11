@@ -122,7 +122,7 @@ $(document).ready(function () {
                     {
                         label: month + '월 개인',
                         data: [use, charges.totalCharge / 100],
-                        backgroundColor: ['skyblue', 'skyblue']
+                        backgroundColor: ['#009cda', '#009cda']
                     },
                     {
                         label: month + '월 ' + regionName + ' 평균',

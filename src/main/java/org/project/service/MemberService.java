@@ -61,7 +61,7 @@ public class MemberService {
     }
 
     public boolean isUsernoExist(String userno) {
-        return memberMapper.isUsernoExist(userno);
+        return memberMapper.isUsernoExist(userno) > 0;
     }
 
     public MemberVO getCustomerByUserid(String userid) {

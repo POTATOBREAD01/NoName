@@ -11,7 +11,7 @@ public interface MemberMapper {
 
     int countById(String userid);                     // 아이디 중복 검사
     int countByEmail(String email);                   // 이메일 중복 검사
-    boolean isUsernoExist(String userno);             // 고객번호 중복 검사
+    int isUsernoExist(String userno);             // 고객번호 중복 검사
 
     MemberVO getCustomerByUserid(String userid);      // 고객 상세 조회 (전기요금 포함)
     void deleteCustomer(String userid);               // 고객 삭제

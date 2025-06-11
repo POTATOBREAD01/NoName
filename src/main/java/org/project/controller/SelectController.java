@@ -58,11 +58,10 @@ public class SelectController {
     // 4. 증명서 페이지로 이동
     @GetMapping("/proof.do")
     public String showProofPage(@RequestParam(value = "userid", required = false) String userid, Model model) {
-        // userid 파라미터가 없으면 로그인 사용자 아이디로 대체
         if (userid == null || userid.isEmpty()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null && auth.isAuthenticated()) {
-                userid = auth.getName();  // 로그인한 아이디 가져오기
+                userid = auth.getName();
             }
         }
 
@@ -76,11 +75,20 @@ public class SelectController {
             model.addAttribute("message", "해당 회원을 찾을 수 없습니다.");
             return "error";
         }
+
         List<Integer> realCharges = new ArrayList<>();
         int totalAmount = 0;
+
         if (member.getMonthlyUsage() != null) {
-            for (int use : member.getMonthlyUsage()) {
+            List<Integer> usageList = member.getMonthlyUsage();
+            int currentMonth = java.time.LocalDate.now().getMonthValue();
+
+            for (int i = 0; i < usageList.size(); i++) {
+                if (i + 1 > currentMonth) break;  // 현재월까지만
+
+                int use = usageList.get(i);
                 int basic = 0, useCharge = 0;
+
                 if (use <= 200) {
                     basic = 730;
                     useCharge = use * 97;
@@ -91,21 +99,22 @@ public class SelectController {
                     basic = 6060;
                     useCharge = use * 234;
                 }
+
                 int ceCharge = (use / 10) * 73;
                 int fcAdjustment = use * 5;
                 int sumCharge = basic + useCharge + ceCharge + fcAdjustment;
                 int fund = (sumCharge / 1000) * 36;
-                int addedTax = Math.round(sumCharge / 10);
+                int addedTax = Math.round(sumCharge / 10f);
                 int totalCharge = sumCharge + addedTax + fund;
 
                 realCharges.add(totalCharge);
-                totalAmount += totalCharge; // ⭐ 여기서 누적
+                totalAmount += totalCharge;
             }
         }
 
         model.addAttribute("member", member);
         model.addAttribute("realCharges", realCharges);
-        model.addAttribute("totalAmount", totalAmount); // ✔ 정확한 총액 전달
+        model.addAttribute("totalAmount", totalAmount);  // ✅ 현재월까지만 합산된 값
         return "proof";
     }
 
